@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import math
 
 x=[]
 
@@ -27,28 +28,32 @@ x.append([2.7, 33.1])
 
 x = np.array(x)
 
-# Calculate the euclidian distance in n-space of the route r traversing holes c, ending at the path start.
-path_distance = lambda r,h: np.sum([np.linalg.norm(h[r[p]]-h[r[p-1]]) for p in range(len(r))])
+# Calculate the euclidian distance in n-space of the route r traversing holes h, ending at the path start.
+path_distance = lambda r,h: np.sum([np.linalg.norm(h[r[p]]-h[r[p-1]]) for p in range(1, len(r))])
 
+        
 # Reverse the order of all elements from element i to element k in array r.
 two_opt_swap = lambda r,i,k: np.concatenate((r[0:i],r[k:-len(r)+i-1:-1],r[k+1:len(r)]))
 
 
 ########## TWO OPT ALGORITHM #####
 def two_opt(holes,improvement_threshold):
+    cntrr = 0
     route = np.arange(holes.shape[0])
     improvement_factor = 1 # Initialize the improvement factor.
     best_distance = path_distance(route,holes) # Calculate the distance of the initial path.
     while improvement_factor > improvement_threshold: # If the route is still improving, keep going!
         distance_to_beat = best_distance # Record the distance at the beginning of the loop.
-        for swap_first in range(1,len(route)-1):
+        for swap_first in range(0,len(route)-1):
             for swap_last in range(swap_first+1,len(route)):
+                cntrr = cntrr + 1
                 new_route = two_opt_swap(route,swap_first,swap_last)
                 new_distance = path_distance(new_route,holes)
                 if new_distance < best_distance:
                     route = new_route
                     best_distance = new_distance
         improvement_factor = 1 - best_distance/distance_to_beat # Calculate how much the route has improved.
+    print("Itrations: ", cntrr)
     return route 
 
 
@@ -59,7 +64,7 @@ def three_opt(holes,improvement_threshold): # 2-opt Algorithm adapted from https
     best_distance = path_distance(route,holes) # Calculate the distance of the initial path.
     while improvement_factor > improvement_threshold: # If the route is still improving, keep going!
         distance_to_beat = best_distance # Record the distance at the beginning of the loop.
-        for swap_first in range(1,len(route)-2):
+        for swap_first in range(0,len(route)-2):
             for swap_last in range(swap_first+1,len(route)-1):
                 for swap_mid in range(swap_last + 1, len(route)):
                     for cnt in range(4):
@@ -77,16 +82,18 @@ def three_opt(holes,improvement_threshold): # 2-opt Algorithm adapted from https
 
 ########## FOUR OPT ALGORITHM #####
 def four_opt(holes,improvement_threshold):
+    cntrr = 0
     route = np.arange(holes.shape[0])
     improvement_factor = 1 # Initialize the improvement factor.
     best_distance = path_distance(route,holes) # Calculate the distance of the initial path.
     while improvement_factor > improvement_threshold: # If the route is still improving, keep going!
         distance_to_beat = best_distance # Record the distance at the beginning of the loop.
-        for swap_first in range(1,len(route)-3):
+        for swap_first in range(0,len(route)-3):
             for swap_last in range(swap_first+1,len(route)-2):
                 for swap_mid in range(swap_last + 1, len(route) - 1):
                     for swap_fourth in range(swap_mid + 1, len(route)):
                         for cnt in range(22):
+                            cntrr = cntrr + 1
                             if cnt == 5:
                                 new_route = two_opt_swap(route, swap_first, swap_last)
                             if cnt == 11:
@@ -102,23 +109,24 @@ def four_opt(holes,improvement_threshold):
                                 route = new_route
                                 best_distance = new_distance
         improvement_factor = 1 - best_distance/distance_to_beat # Calculate how much the route has improved.
+    print("Itrations: ", cntrr)
     return route
-    
-
 ########## MAIN #####
+    
 mov = 0
 start_time = time.time()
-route = two_opt(np.roll(x, mov, axis=0), 0.0001)
+route = three_opt(np.roll(x, mov, axis=0), 0.0001)
 elapsed_time = time.time() - start_time
 
 ########## PLOT #####
 new_holes_order = np.ndarray((len(route), 2))
-#new_holes_order = np.concatenate((np.array([x[route[i]] for i in range(len(route))]),np.array([x[0]])))
 for i in range(len(route)):
     new_holes_order[i] = x[route[i]]
+
 plt.scatter(x[:,0],x[:,1])
 plt.plot(new_holes_order[:,0],new_holes_order[:,1], 'r')
 plt.show()
+
 ########## PRINT STATS #####
 print("\nRoute: " + str((route + mov) % 20 + 1) + "\nDistance: " + str(path_distance(route,x)))
 print("Time elapsed: ", elapsed_time)
