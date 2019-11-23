@@ -24,10 +24,6 @@ def nextTemp(T, a):
 def hamming_distance(a, b):
     return sum(ch1 != ch2 for ch1, ch2 in zip(a, b))
 
-XX = np.empty((100))
-YY = np.empty((100))
-ee = 0
-
 def func(T0, a, iTot):
     rArr = np.zeros((iTot))
     T = T0
