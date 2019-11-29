@@ -2,12 +2,12 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from scipy import optimize
-
+import random
 ##### VARIABLS ################################################################
 a = 0.95
 T0 = 50
 N = 100
-iTot = 200
+iTot = 100
 M = 20
 ###############################################################################
 
@@ -28,14 +28,18 @@ def func(T0, a, iTot):
     rArr = np.zeros((iTot))
     T = T0
     e = iTot
-    x = np.random.choice([0,1], size=(N,), p=[(iTot-e)/iTot,e/iTot])
+    xHamm=random.uniform(0,-100/(iTot-1)*(iTot-e)+100)
+    x = np.random.choice([0,1], size=(N,), p=[1-xHamm/100,xHamm/100])
+    #x = np.random.choice([0,1], size=(N,), p=[(iTot-e)/iTot,e/iTot])
     f = opt(x)
     while(e > 0):
         rArr[iTot - e] = f
         eTemp = e
         xTemp = x
         while(eTemp >= e):
-            xTemp = np.random.choice([0,1], size=(N,), p=[(iTot-e)/iTot,e/iTot])
+            xHamm=random.uniform(0,-100/(iTot-1)*(iTot-e)+100)
+            xTemp = np.random.choice([0,1], size=(N,), p=[1-xHamm/100,xHamm/100])
+            #xTemp = np.random.choice([0,1], size=(N,), p=[(iTot-e)/iTot,e/iTot])
             eTemp = hamming_distance(x, xTemp)
         e -= 1      
         fTemp = opt(xTemp)
