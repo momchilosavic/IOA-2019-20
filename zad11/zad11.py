@@ -15,7 +15,7 @@ def dist(A, B):
 def opt(x):
     S1 = np.array(x[:3])
     S2 = np.array(x[3:])
-    A, B, C, D = np.array([[1, 5, 1], [2, 3, 0], [5, 6, 1], [6, 3, 3]])
+    A, B, C, D = np.array([[1, 5, 1], [3, 2,, 0], [5, 6, 1], [6, 3, 3]])
     return dist(A, S1) + dist(B, S1) + dist(S1, S2) + dist(C, S2) + dist(D, S2)
 
 
