@@ -68,7 +68,7 @@ S2[1] = dim[4]
 S2[2] = dim[5]
 
 
-A, B, C, D = np.array([[1, 5, 1], [2, 3, 0], [5, 6, 1], [6, 3, 3]])
+A, B, C, D = np.array([[1, 5, 1], [3, 2, 0], [5, 6, 1], [6, 3, 3]])
 
 fig = plt.figure(figsize=((8,6)), dpi=80)
 ax = fig.add_subplot(111, projection='3d')
